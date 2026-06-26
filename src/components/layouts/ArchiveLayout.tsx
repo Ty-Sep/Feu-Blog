@@ -18,7 +18,7 @@
 
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState, useCallback } from 'react'
 
 import type { Locale, CategoryLink, ProfileData } from '@/lib/types'
 
@@ -27,6 +27,8 @@ import { CategoryList } from '@/components/sections/CategoryList'
 import { ProfileCard } from '@/components/sections/ProfileCard'
 import { HandDrawnBorder } from '@/components/primitives/HandDrawnBorder'
 import { PaperPlane } from '@/components/interactive/PaperPlane'
+import { SearchPopover } from '@/components/search/SearchPopover'
+import type { Anchor } from '@/components/search/SearchPopover'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -50,11 +52,31 @@ export function ArchiveLayout({
   className = '',
 }: ArchiveLayoutProps): React.ReactElement {
   const pageRef = useRef<HTMLDivElement>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [anchorRect, setAnchorRect] = useState<Anchor>({ left: 0, right: 0, top: 0, bottom: 0 })
+
+  const handlePlaneClick = useCallback((rect: DOMRect) => {
+    setAnchorRect({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom })
+    setSearchOpen(true)
+  }, [])
+
+  const handleSearchClose = useCallback(() => {
+    setSearchOpen(false)
+  }, [])
 
   return (
     <div ref={pageRef} style={{ position: 'relative' }}>
-      {/* ── Paper plane mouse trail ── */}
-      <PaperPlane containerRef={pageRef} />
+      {/* ── Paper plane (search trigger) ── */}
+      <PaperPlane containerRef={pageRef} onClick={handlePlaneClick} />
+
+      {/* ── Search popover ── */}
+      {searchOpen && (
+        <SearchPopover
+          anchorRect={anchorRect}
+          locale={locale}
+          onClose={handleSearchClose}
+        />
+      )}
 
       {/* ── Content ── */}
       <div style={{ position: 'relative', zIndex: 1 }}>

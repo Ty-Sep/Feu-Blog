@@ -19,7 +19,7 @@
 
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState, useCallback } from 'react'
 
 import type { Locale } from '@/lib/types'
 import type { TimelineItem } from '@/components/sections/ActivityTimelineSection'
@@ -31,6 +31,8 @@ import { FeaturedArticlesSection } from '@/components/sections/FeaturedArticlesS
 import { ActivityTimelineSection } from '@/components/sections/ActivityTimelineSection'
 import { SketchDivider } from '@/components/primitives/SketchDivider'
 import { PaperPlane } from '@/components/interactive/PaperPlane'
+import { SearchPopover } from '@/components/search/SearchPopover'
+import type { Anchor } from '@/components/search/SearchPopover'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -62,13 +64,35 @@ export function HomepageLayout({
   className = '',
 }: HomepageLayoutProps): React.ReactElement {
   const pageRef = useRef<HTMLDivElement>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [anchorRect, setAnchorRect] = useState<Anchor>({ left: 0, right: 0, top: 0, bottom: 0 })
+
+  const handlePlaneClick = useCallback((rect: DOMRect) => {
+    setAnchorRect({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom })
+    setSearchOpen(true)
+  }, [])
+
+  const handleSearchClose = useCallback(() => {
+    setSearchOpen(false)
+  }, [])
 
   return (
     <div ref={pageRef} style={{ position: 'relative' }}>
       {/* ════════════════════════════════════════════════
-          Global paper plane — z-5, between background & content
+          Paper plane (search trigger) — z-5
           ════════════════════════════════════════════════ */}
-      <PaperPlane containerRef={pageRef} />
+      <PaperPlane containerRef={pageRef} onClick={handlePlaneClick} />
+
+      {/* ════════════════════════════════════════════════
+          Search popover
+          ════════════════════════════════════════════════ */}
+      {searchOpen && (
+        <SearchPopover
+          anchorRect={anchorRect}
+          locale={locale}
+          onClose={handleSearchClose}
+        />
+      )}
 
       {/* ════════════════════════════════════════════════
           Content — z-1 carries the SiteShell background

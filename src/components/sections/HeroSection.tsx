@@ -12,7 +12,6 @@
 //
 // Dependencies:
 //   - HeroWindowScene (Phase Hero-Animation)
-//   - SearchCommand    (Phase 7)
 //   - MainNav          (Phase 3C)
 // =============================================================================
 
@@ -22,7 +21,6 @@ import React, { useId, useRef, useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 
 import type { Locale } from '@/lib/types'
-import { SearchCommand } from '@/components/search/SearchCommand'
 
 import { HeroWindowScene } from '@/components/interactive/HeroWindowScene'
 import miroodlesSticker from '@/image/Miroodles - Sticker.png'
@@ -301,17 +299,6 @@ export function HeroSection({
             </motion.p>
           </div>
         </WindowFrame>
-      </div>
-
-      {/* ════════════════════════════════════════════
-          Layer 100 — Navigation bar
-          (positioned left of the FloatingActionButton)
-          ════════════════════════════════════════════ */}
-      <div
-        className="absolute z-[100] flex items-center gap-[var(--space-3)]"
-        style={{ top: '28px', right: '100px' }}
-      >
-        <SearchCommand locale={locale} />
       </div>
 
       {/* ════════════════════════════════════════════

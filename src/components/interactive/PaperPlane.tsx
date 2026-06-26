@@ -9,7 +9,7 @@
 
 'use client'
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, forwardRef, useCallback } from 'react'
 
 import paperPlanePng from '@/image/paper-plane.png'
 
@@ -85,16 +85,33 @@ function clamp(v: number, lo: number, hi: number): number {
 export interface PaperPlaneProps {
   /** Ref to the container element the plane is confined within. */
   containerRef: React.RefObject<HTMLElement | null>
+  /** Called when the plane is clicked, with its current bounding rect. */
+  onClick?: (rect: DOMRect) => void
 }
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
-export function PaperPlane({
-  containerRef,
-}: PaperPlaneProps): React.ReactElement {
-  const planeRef = useRef<HTMLDivElement>(null)
+export const PaperPlane = forwardRef<HTMLDivElement, PaperPlaneProps>(
+  function PaperPlane({ containerRef, onClick }, ref) {
+  const internalRef = useRef<HTMLDivElement | null>(null)
+
+  // Merge forwarded ref + internal ref so the parent can read the DOM node
+  const setPlaneRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      internalRef.current = node
+      if (typeof ref === 'function') {
+        ref(node)
+      } else if (ref) {
+        ;(ref as React.MutableRefObject<HTMLDivElement | null>).current = node
+      }
+    },
+    [ref],
+  )
+
+  // Alias for internal use — always use internalRef
+  const planeRef = internalRef
 
   useEffect(() => {
     const container = containerRef.current
@@ -366,12 +383,21 @@ export function PaperPlane({
     }
   }, [containerRef])
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!onClick || !planeRef.current) return
+    onClick(planeRef.current.getBoundingClientRect())
+  }
+
   return (
     <div
-      ref={planeRef}
-      aria-hidden="true"
+      ref={setPlaneRef}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      aria-label="打开搜索"
       className="
-        pointer-events-none
+        pointer-events-auto cursor-pointer
         w-[48px] sm:w-[56px] md:w-[72px] lg:w-[84px]
         h-auto
       "
@@ -394,4 +420,4 @@ export function PaperPlane({
       />
     </div>
   )
-}
+})
