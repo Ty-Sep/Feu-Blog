@@ -1,0 +1,202 @@
+/* ==========================================================================
+   Design Tokens & Global Styles
+   Strictly follows design-system.md — every value lives here, nowhere else.
+   ========================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Layer: base
+   Defines every CSS custom property used by the design system.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    /* ── Paper ── */
+    --bg-page:  #faf8f5;
+    --bg-card:  #fefdfb;
+    --bg-prose: #ffffff;
+
+    /* ── Ink ── */
+    --ink-primary:   #2c2c2c;
+    --ink-secondary: #5c5c5c;
+    --ink-muted:     #9a9a9a;
+
+    /* ── Accent (content types) ── */
+    --accent-study:    #7b9eb3;
+    --accent-articles: #b38b6b;
+    --accent-projects: #9b8ec4;
+    --accent-lab:      #8b9e7b;
+
+    /* ── Sticky Notes ── */
+    --sticky-yellow: #f8f0c6;
+    --sticky-blue:   #cce0f0;
+    --sticky-pink:   #f0d4da;
+
+    /* ── Typography ── */
+    --font-title: 'Caveat', 'Kalam', cursive;
+    --font-body:  'Noto Sans SC', 'Source Han Sans', sans-serif;
+    --font-mono:  'JetBrains Mono', monospace;
+
+    /* ── Spacing scale (4px base) ── */
+    --space-1:  0.25rem;
+    --space-2:  0.5rem;
+    --space-3:  0.75rem;
+    --space-4:  1rem;
+    --space-5:  1.25rem;
+    --space-6:  1.5rem;
+    --space-8:  2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+
+    /* ── Max content widths ── */
+    --content-max-width:  42rem;
+    --homepage-max-width: 64rem;
+
+    /* ── Shadows ── */
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-note: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    /* ── Animation durations ── */
+    --duration-fade:  200ms;
+    --duration-slide: 300ms;
+    --stagger-delay:  60ms;
+  }
+
+  /* ── Base element reset ── */
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--ink-primary);
+    font-family: var(--font-body);
+    line-height: 1.75;
+  }
+
+  /* ── Respect user motion preference ── */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Layer: components
+   Reusable utility classes for notebook-styled prose and code blocks.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@layer components {
+  /* ── Article body prose ── */
+  .prose-notebook {
+    max-width: var(--content-max-width);
+    color: var(--ink-primary);
+    font-family: var(--font-body);
+    line-height: 1.75;
+  }
+
+  .prose-notebook h1,
+  .prose-notebook h2,
+  .prose-notebook h3,
+  .prose-notebook h4 {
+    font-family: var(--font-title);
+    color: var(--ink-primary);
+    line-height: 1.4;
+  }
+
+  .prose-notebook code {
+    font-family: var(--font-mono);
+  }
+
+  .prose-notebook a {
+    color: var(--ink-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ── Notebook code block shell ──
+     Wraps the Shiki-highlighted <pre> inside a hand-drawn-styled container.
+     The copy button is rendered by the React CodeBlock component. ── */
+  .notebook-code-block {
+    position: relative;
+    margin: var(--space-6) 0;
+    border-radius: 0.25rem;
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .notebook-code-block .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-4);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    background-color: var(--bg-page);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .notebook-code-block .code-header .lang-label {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .notebook-code-block pre {
+    margin: 0;
+    padding: var(--space-4);
+    overflow-x: auto;
+    background-color: var(--bg-prose);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    border-radius: 0;
+  }
+
+  .notebook-code-block pre code {
+    display: block;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: none;
+    padding: 0;
+  }
+
+  /* ── Inline code ── */
+  :not(pre) > code {
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    background-color: var(--sticky-yellow);
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--ink-primary);
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Layer: utilities
+   ────────────────────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Stagger delay utility for Framer Motion children. */
+  .stagger-child {
+    --stagger-index: 0;
+    animation-delay: calc(var(--stagger-index) * var(--stagger-delay));
+  }
+}

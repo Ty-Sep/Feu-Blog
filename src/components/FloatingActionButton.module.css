@@ -1,0 +1,87 @@
+/* ==========================================================================
+   FloatingActionButton — 3D push-button (circular stamp variant).
+
+   Structure (matches reference pattern exactly):
+     .container  — fixed-position wrapper
+       button.outer (or a.outer)  — "shadow" layer, dark bg, no border
+         span.top                 — "face" layer, light bg + border, translates
+
+   Hover:  .top lifts  → translateY(-6px), more dark base exposed
+   Active: .top presses → translateY(0), flush with the base
+   ========================================================================== */
+
+/* ── Fixed-position wrapper ── */
+.container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 200;
+}
+
+/* ── Outer "shadow" layer ──
+   Same role as the reference <button>:
+   - border: none
+   - border-radius: 50%
+   - background: dark (the "base" that peeks out)
+   Applied to both <button> (back variant) and <a> (Link variant). */
+.outer {
+  display: block;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background: var(--ink-primary);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  overflow: visible;
+}
+
+/* ── Focus ring (respects border-radius in modern browsers) ── */
+.outer:focus-visible {
+  outline: 2.5px solid var(--ink-primary);
+  outline-offset: 3px;
+}
+
+/* ── Inner "top" face — the paper stamp surface ──
+   Same role as .button_top in the reference:
+   - border: 2px solid (the stroke)
+   - border-radius: 50%
+   - background: light (the paper)
+   - transform: translateY (the push animation)
+   - transition: transform 0.1s ease */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--ink-primary);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--ink-primary);
+  transform: translateY(-4px);
+  transition: transform 0.1s ease;
+  user-select: none;
+}
+
+/* ── Hover: lift the stamp higher ── */
+.outer:hover .top {
+  transform: translateY(-6px);
+}
+
+/* ── Active: press the stamp into the base ── */
+.outer:active .top {
+  transform: translateY(0);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .top {
+    transition: none;
+  }
+}
