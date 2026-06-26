@@ -14,7 +14,7 @@ import { notFound } from 'next/navigation'
 import { MarkdownAsync } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeSlug from 'rehype-slug'
-import rehypeShiki from '@shikijs/rehype'
+import rehypeShikiOriginal from '@shikijs/rehype'
 
 import GithubSlugger from 'github-slugger'
 
@@ -22,6 +22,7 @@ import type { Locale, ContentType, ContentItem } from '@/types'
 import type { TocItem } from '@/types'
 import { CONTENT_TYPES } from '@/tokens/card-config'
 import { getContentBySlug, getAllSlugs, getBookBySlug } from '@/lib/content'
+import { getCachedHtml, getChapterHtmlPathMap, getCachedStandalone } from '@/lib/content/html-cache'
 import { getCardConfig } from '@/tokens/card-config'
 import { DetailLayout } from '@/components/layout/DetailLayout'
 import { BookPage } from '@/components/content/BookPage'
@@ -131,10 +132,32 @@ const components = {
 // Shared markdown config
 // ---------------------------------------------------------------------------
 
+/**
+ * Profiled rehypeShiki — wraps the original plugin to time both the plugin
+ * factory call and the actual transform (where the Shiki highlighter is
+ * lazily initialised on first use).
+ */
+function profiledRehypeShiki(options: { theme: string }) {
+  console.time('[Perf] rehypeShiki: plugin factory (SSR path)')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const transformer = (rehypeShikiOriginal as any)(options)
+  console.timeEnd('[Perf] rehypeShiki: plugin factory (SSR path)')
+
+  return async (tree: unknown, file?: unknown) => {
+    console.time('[Perf] rehypeShiki: transform (SSR path) — first call = highlighter init')
+    if (transformer) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (transformer as any)(tree, file)
+    }
+    console.timeEnd('[Perf] rehypeShiki: transform (SSR path) — first call = highlighter init')
+  }
+}
+
 const remarkPlugins = [remarkGfm]
-const rehypePlugins: [typeof rehypeSlug, [typeof rehypeShiki, { theme: string }]] = [
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const rehypePlugins: any[] = [
   rehypeSlug,
-  [rehypeShiki, { theme: 'github-light' }],
+  [profiledRehypeShiki, { theme: 'github-light' }],
 ]
 
 // ---------------------------------------------------------------------------
@@ -206,9 +229,11 @@ export default async function DetailPage({
 }: {
   params: Promise<{ lang: string; type: string; slug: string }>
 }): Promise<React.ReactElement> {
+  console.time('[Perf] DetailPage total')
   const { lang, type, slug } = await params
 
   if (!isValidType(type)) {
+    console.timeEnd('[Perf] DetailPage total')
     notFound()
   }
 
@@ -218,38 +243,85 @@ export default async function DetailPage({
   // ── Path 1: Book mode ──
   const book = await getBookBySlug(contentType, slug, locale)
   if (book) {
-    // Pre-extract TOC for each chapter
-    const chaptersWithToc = book.chapters.map((ch) => ({
-      ...ch,
-      toc: extractToc(ch.rawContent),
-    }))
+    // Pre-extract TOC for each chapter (lightweight regex pass)
+    console.time('[Perf] extractToc (all chapters)')
+    const chaptersWithToc = book.chapters.map((ch, i) => {
+      const t0 = performance.now()
+      const toc = extractToc(ch.rawContent)
+      const elapsed = performance.now() - t0
+      if (elapsed > 1) {
+        console.log(`[Perf] extractToc: ch[${i}] "${ch.title}" = ${elapsed.toFixed(2)} ms (${ch.rawContent.length} chars)`)
+      }
+      return { ...ch, toc }
+    })
+    console.timeEnd('[Perf] extractToc (all chapters)')
 
-    // Pre-render all chapters on the server so client switching is instant
-    const renderedChapters = chaptersWithToc.map((ch) => (
-      <ArticleShell
-        key={ch.slug}
-        title={ch.title}
-        date={ch.frontmatter.date}
-        tags={ch.frontmatter.tags}
-      >
-        <MDXRenderer>
-          <MarkdownAsync
-            remarkPlugins={remarkPlugins}
-            rehypePlugins={rehypePlugins}
-            components={components}
-          >
-            {ch.rawContent}
-          </MarkdownAsync>
-        </MDXRenderer>
-      </ArticleShell>
-    ))
+    // Only SSR-render the FIRST chapter.  Other chapters are loaded on demand
+    // via Server Action so the initial payload is proportional to one chapter,
+    // not the entire series.
+    //
+    // When the build-time cache is available the first chapter is served from
+    // pre-rendered HTML (no runtime pipeline).  Falls back to MarkdownAsync
+    // (full remark/rehype/Shiki) when the cache hasn't been built yet.
 
+    // Chapter slug → htmlPath map for client-side cache reading
+    const chapterHtmlPaths = await getChapterHtmlPathMap(contentType, slug)
+
+    const firstChapter = chaptersWithToc[0]!
+    const firstChapterHtmlPath = chapterHtmlPaths.get(firstChapter.slug)
+    const cachedFirstHtml = firstChapterHtmlPath
+      ? await getCachedHtml(firstChapterHtmlPath)
+      : null
+
+    let initialRenderedChapter: React.ReactNode
+    if (cachedFirstHtml) {
+      console.time('[Perf] page: first chapter (cached HTML)')
+      initialRenderedChapter = (
+        <ArticleShell
+          key={firstChapter.slug}
+          title={firstChapter.title}
+          date={firstChapter.frontmatter.date}
+          tags={firstChapter.frontmatter.tags}
+        >
+          <MDXRenderer>
+            <div dangerouslySetInnerHTML={{ __html: cachedFirstHtml }} />
+          </MDXRenderer>
+        </ArticleShell>
+      )
+      console.timeEnd('[Perf] page: first chapter (cached HTML)')
+    } else {
+      console.time('[Perf] page: MarkdownAsync (first chapter)')
+      initialRenderedChapter = (
+        <ArticleShell
+          key={firstChapter.slug}
+          title={firstChapter.title}
+          date={firstChapter.frontmatter.date}
+          tags={firstChapter.frontmatter.tags}
+        >
+          <MDXRenderer>
+            <MarkdownAsync
+              remarkPlugins={remarkPlugins}
+              rehypePlugins={rehypePlugins}
+              components={components}
+            >
+              {firstChapter.rawContent}
+            </MarkdownAsync>
+          </MDXRenderer>
+        </ArticleShell>
+      )
+      // Note: MarkdownAsync JSX creation is sync; actual rendering is deferred to
+      // React's server render pass and is NOT captured by this timer.
+      console.timeEnd('[Perf] page: MarkdownAsync (first chapter)')
+    }
+
+    console.timeEnd('[Perf] DetailPage total')
     return (
       <BookPage
         locale={locale}
         bookTitle={book.title}
         chapters={chaptersWithToc}
-        renderedChapters={renderedChapters}
+        initialRenderedChapter={initialRenderedChapter}
+        chapterHtmlPaths={chapterHtmlPaths.size > 0 ? chapterHtmlPaths : undefined}
       />
     )
   }
@@ -257,12 +329,25 @@ export default async function DetailPage({
   // ── Path 2: Standalone article ──
   const article = await getContentBySlug(contentType, slug, locale)
   if (!article) {
+    console.timeEnd('[Perf] DetailPage total')
     notFound()
   }
 
   // ── Extract TOC (all article types) ──
-  const toc: TocItem[] = extractToc(article.rawContent)
+  // Prefer cached TOC when available; otherwise extract at runtime.
+  const cachedStandalone = await getCachedStandalone(contentType, slug, locale)
+  const cachedHtml = cachedStandalone
+    ? await getCachedHtml(cachedStandalone.htmlPath)
+    : null
 
+  const toc: TocItem[] = cachedStandalone?.toc ?? (() => {
+    console.time('[Perf] extractToc (standalone)')
+    const items = extractToc(article.rawContent)
+    console.timeEnd('[Perf] extractToc (standalone)')
+    return items
+  })()
+
+  console.timeEnd('[Perf] DetailPage total')
   return (
     <DetailLayout
       locale={locale}
@@ -271,13 +356,17 @@ export default async function DetailPage({
       toc={toc}
     >
       <MDXRenderer>
-        <MarkdownAsync
-          remarkPlugins={remarkPlugins}
-          rehypePlugins={rehypePlugins}
-          components={components}
-        >
-          {article.rawContent}
-        </MarkdownAsync>
+        {cachedHtml ? (
+          <div dangerouslySetInnerHTML={{ __html: cachedHtml }} />
+        ) : (
+          <MarkdownAsync
+            remarkPlugins={remarkPlugins}
+            rehypePlugins={rehypePlugins}
+            components={components}
+          >
+            {article.rawContent}
+          </MarkdownAsync>
+        )}
       </MDXRenderer>
     </DetailLayout>
   )

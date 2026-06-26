@@ -1,5 +1,6 @@
 // =============================================================================
-// useClickOutside — fires a callback when a pointerdown occurs outside a ref.
+// useClickOutside — fires a callback when a click occurs outside a ref.
+// 从 pointerdown 改为 click，避免和纸飞机 click 事件产生时序竞态
 // =============================================================================
 
 import { useEffect, useRef } from 'react'
@@ -12,21 +13,21 @@ export function useClickOutside(
   handlerRef.current = handler
 
   useEffect(() => {
-    const onPointerDown = (e: PointerEvent) => {
+    const onClick = (e: MouseEvent) => {
       if (!ref.current) return
       if (!ref.current.contains(e.target as Node)) {
         handlerRef.current()
       }
     }
 
-    // Delayed registration to avoid the open-click itself triggering close
+    // 延迟注册，避免打开弹窗的点击直接触发关闭
     const id = setTimeout(() => {
-      document.addEventListener('pointerdown', onPointerDown)
+      document.addEventListener('click', onClick)
     }, 0)
 
     return () => {
       clearTimeout(id)
-      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('click', onClick)
     }
   }, [ref])
 }

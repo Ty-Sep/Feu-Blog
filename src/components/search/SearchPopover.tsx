@@ -1,21 +1,5 @@
 // =============================================================================
 // SearchPopover — workbench-style search popover anchored to paper plane.
-//
-// Behaviour:
-//   - Position computed ONCE at open time from the plane's bounding rect
-//   - Smart four-quadrant placement + viewport clamping (16 px margin)
-//   - Fixed position after opening — does NOT follow the plane's animation
-//   - Resize listener recalculates from the SAME anchor (not plane position)
-//   - Expand animation (scale up from plane center) on mount
-//   - Collapse animation (scale down to plane center) on close
-//   - Auto-focus input after expand animation completes
-//   - Click outside → close
-//   - ESC → close
-//   - Fuzzy search across title / description / tags
-//
-// Dependencies:
-//   - SearchProvider (useSearchEntries)
-//   - next/navigation (useRouter)
 // =============================================================================
 
 'use client'
@@ -27,6 +11,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 
 import { useSearchEntries } from '@/components/search/SearchProvider'
@@ -40,7 +25,6 @@ import type { SearchEntry } from '@/types'
 // ---------------------------------------------------------------------------
 
 export interface SearchPopoverProps {
-  /** Anchor rect from the plane at click time (fixed, never updated). */
   anchorRect: Anchor
   locale: string
   onClose: () => void
@@ -52,10 +36,11 @@ export interface SearchPopoverProps {
 
 type Phase = 'entering' | 'visible' | 'exiting'
 
-const EXPAND_DURATION = 320 // ms
-const VIEWPORT_MARGIN = 16 // px
-const PANEL_WIDTH = 520 // px max (design spec)
-const PANEL_HEIGHT_EST = 420 // px (rough estimate for quadrant selection)
+const EXPAND_DURATION = 320
+const VIEWPORT_MARGIN = 16
+const PANEL_WIDTH = 520
+const PANEL_HEIGHT_EST = 420
+const GAP = 8 // 弹窗与纸飞机的间距
 
 // ---------------------------------------------------------------------------
 // Labels
@@ -67,7 +52,7 @@ const LABELS = {
 } as const
 
 // ---------------------------------------------------------------------------
-// Anchor type + smart position calculator
+// Anchor + position calculator
 // ---------------------------------------------------------------------------
 
 export interface Anchor {
@@ -85,32 +70,45 @@ function computePosition(anchor: Anchor): { left: number; top: number } {
   const pw = Math.min(PANEL_WIDTH, vw - m * 2)
   const ph = PANEL_HEIGHT_EST
 
+  // 从坐标计算飞机宽高
+  const planeW = anchor.right - anchor.left
+  const planeH = anchor.bottom - anchor.top
+  const planeCenterX = anchor.left + planeW / 2
+  const planeCenterY = anchor.top + planeH / 2
+
+  // 四个方向的可用空间
   const spaceRight = vw - anchor.right - m
   const spaceLeft = anchor.left - m
   const spaceBottom = vh - anchor.bottom - m
   const spaceTop = anchor.top - m
 
-  // Horizontal: prefer right, fallback left, then centre
   let left: number
-  if (spaceRight >= pw) {
-    left = anchor.right
-  } else if (spaceLeft >= pw) {
-    left = anchor.left - pw
-  } else {
-    left = Math.max(m, (vw - pw) / 2)
-  }
-
-  // Vertical: prefer bottom, fallback top, then centre
   let top: number
-  if (spaceBottom >= ph) {
-    top = anchor.bottom + 12
+
+  // 优先级：右 > 左 > 下 > 上 > 居中
+  if (spaceRight >= pw) {
+    // 右侧弹出，垂直居中对齐飞机
+    left = anchor.right + GAP
+    top = planeCenterY - ph / 2
+  } else if (spaceLeft >= pw) {
+    // 左侧弹出，垂直居中对齐飞机
+    left = anchor.left - pw - GAP
+    top = planeCenterY - ph / 2
+  } else if (spaceBottom >= ph) {
+    // 下方弹出，水平居中对齐飞机
+    top = anchor.bottom + GAP
+    left = planeCenterX - pw / 2
   } else if (spaceTop >= ph) {
-    top = anchor.top - ph - 12
+    // 上方弹出，水平居中对齐飞机
+    top = anchor.top - ph - GAP
+    left = planeCenterX - pw / 2
   } else {
-    top = Math.max(m, (vh - ph) / 2)
+    // 空间都不足，视口居中兜底
+    left = (vw - pw) / 2
+    top = (vh - ph) / 2
   }
 
-  // Viewport clamp
+  // 最终视口边界约束
   left = clamp(left, m, vw - pw - m)
   top = clamp(top, m, vh - ph - m)
 
@@ -140,64 +138,68 @@ export function SearchPopover({
   anchorRect,
   locale,
   onClose,
-}: SearchPopoverProps): React.ReactElement {
+}: SearchPopoverProps): React.ReactElement | null {
   const entries = useSearchEntries()
   const router = useRouter()
   const [phase, setPhase] = useState<Phase>('entering')
   const [query, setQuery] = useState('')
   const [pos, setPos] = useState(() => computePosition(anchorRect))
+  const [mounted, setMounted] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
   const t = locale === 'zh' ? LABELS.zh : LABELS.en
 
-  // ── 计算缩放原点：始终对准纸飞机中心 ──
+  // SSR 兼容：客户端挂载后再渲染 Portal
+  useEffect(() => setMounted(true), [])
+
+  // anchor 变化时重新计算位置
+  useEffect(() => {
+    setPos(computePosition(anchorRect))
+  }, [anchorRect])
+
+  // 缩放原点：对准纸飞机中心
   const transformOrigin = useMemo(() => {
-    const planeCenterX = (anchorRect.left + anchorRect.right) / 2
-    const planeCenterY = (anchorRect.top + anchorRect.bottom) / 2
-    const originX = planeCenterX - pos.left
-    const originY = planeCenterY - pos.top
-    return `${originX}px ${originY}px`
+    const cx = (anchorRect.left + anchorRect.right) / 2
+    const cy = (anchorRect.top + anchorRect.bottom) / 2
+    return `${cx - pos.left}px ${cy - pos.top}px`
   }, [anchorRect, pos])
 
-  // ── Resize listener — recalculate from the SAME fixed anchor ──
+  // 窗口大小变化时重算
   useEffect(() => {
     const update = () => setPos(computePosition(anchorRect))
     window.addEventListener('resize', update)
     return () => window.removeEventListener('resize', update)
   }, [anchorRect])
 
-  // ── Prevent body scrollbar overflow ──
+  // 防止横向滚动条溢出
   useEffect(() => {
     const prev = document.documentElement.style.overflowX
     document.documentElement.style.overflowX = 'hidden'
     return () => { document.documentElement.style.overflowX = prev }
   }, [])
 
-  // ── Auto-focus after expand animation ──
+  // 动画结束后自动聚焦（不滚动页面）
   useEffect(() => {
     if (phase === 'entering') {
       const timer = setTimeout(() => {
-        inputRef.current?.focus()
+        inputRef.current?.focus({ preventScroll: true })
         setPhase('visible')
       }, EXPAND_DURATION)
       return () => clearTimeout(timer)
     }
   }, [phase])
 
-  // ── Close with collapse animation ──
+  // 关闭动画
   const startClose = useCallback(() => {
     setPhase('exiting')
     setTimeout(() => onClose(), EXPAND_DURATION)
   }, [onClose])
 
-  // ── Click outside ──
   useClickOutside(panelRef, startClose)
-
-  // ── ESC ──
   useEscapeKey(startClose)
 
-  // ── Filter results ──
+  // 搜索结果
   const results = useMemo(() => {
     if (!query.trim()) return entries.slice(0, 8)
     const q = query.trim()
@@ -211,7 +213,7 @@ export function SearchPopover({
       .slice(0, 12)
   }, [entries, query])
 
-  // ── Navigate + close ──
+  // 跳转并关闭
   const handleSelect = useCallback(
     (href: string) => {
       startClose()
@@ -220,20 +222,23 @@ export function SearchPopover({
     [router, startClose],
   )
 
-  // ── Animation styles：从纸飞机中心缩放弹出/收回 ──
+  // 动画样式
   const isCollapsed = phase === 'entering' || phase === 'exiting'
   const animStyle: React.CSSProperties = {
     opacity: isCollapsed ? 0 : 1,
     transform: isCollapsed ? 'scale(0.12)' : 'scale(1)',
-    transformOrigin: transformOrigin,
+    transformOrigin,
     transition: `opacity ${EXPAND_DURATION}ms cubic-bezier(0.16,1,0.3,1), transform ${EXPAND_DURATION}ms cubic-bezier(0.16,1,0.3,1)`,
   }
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <div
       ref={panelRef}
-      className="fixed z-[200] rounded-sketch overflow-hidden"
+      className="z-[200] rounded-sketch overflow-hidden"
       style={{
+        position: 'fixed',
         left: pos.left,
         top: pos.top,
         width: `clamp(320px, 90vw, ${PANEL_WIDTH}px)`,
@@ -244,7 +249,7 @@ export function SearchPopover({
         ...animStyle,
       }}
     >
-      {/* ── Search input ── */}
+      {/* 搜索输入框 */}
       <div className="flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)]">
         <svg
           width="18" height="18" viewBox="0 0 24 24"
@@ -263,10 +268,7 @@ export function SearchPopover({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t.placeholder}
-          className="
-            flex-1 bg-transparent text-sm outline-none
-            placeholder:select-none
-          "
+          className="flex-1 bg-transparent text-sm outline-none placeholder:select-none"
           style={{
             color: 'var(--ink-primary)',
             fontFamily: 'var(--font-body)',
@@ -275,7 +277,7 @@ export function SearchPopover({
         />
       </div>
 
-      {/* ── Divider 手绘风格分割线 ── */}
+      {/* 分割线 */}
       <div
         className="mx-[var(--space-4)]"
         style={{
@@ -284,7 +286,7 @@ export function SearchPopover({
         }}
       />
 
-      {/* ── Results ── */}
+      {/* 结果列表 */}
       <div
         className="overflow-y-auto px-[var(--space-3)] py-[var(--space-2)]"
         style={{
@@ -312,12 +314,13 @@ export function SearchPopover({
           </ul>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
 // ---------------------------------------------------------------------------
-// SearchResultItem — 对齐全站手绘便签卡片风格
+// SearchResultItem
 // ---------------------------------------------------------------------------
 
 function SearchResultItem({

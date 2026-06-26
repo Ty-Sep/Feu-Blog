@@ -7,13 +7,6 @@
 //
 // Responsive: stacks vertically on mobile, side-by-side at md+.
 // PaperCSS-style sketch containers, vertically centered in viewport.
-//
-// Dependencies:
-//   - SiteShell        (Phase 4D)
-//   - CategoryList     (Phase 4E)
-//   - ProfileCard      (Phase 4E)
-//   - HandDrawnBorder  (Phase 4A)
-//   - PaperPlane       (Phase 3C — global rAF physics)
 // =============================================================================
 
 'use client'
@@ -55,10 +48,20 @@ export function ArchiveLayout({
   const [searchOpen, setSearchOpen] = useState(false)
   const [anchorRect, setAnchorRect] = useState<Anchor>({ left: 0, right: 0, top: 0, bottom: 0 })
 
+  // 点击纸飞机：toggle 开关
   const handlePlaneClick = useCallback((rect: DOMRect) => {
-    setAnchorRect({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom })
-    setSearchOpen(true)
-  }, [])
+    if (searchOpen) {
+      setSearchOpen(false)
+    } else {
+      setAnchorRect({
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+      })
+      setSearchOpen(true)
+    }
+  }, [searchOpen])
 
   const handleSearchClose = useCallback(() => {
     setSearchOpen(false)
@@ -91,7 +94,7 @@ export function ArchiveLayout({
                 items-stretch
               "
             >
-              {/* ── Left panel: 分类卡片，与右侧对称容器感 ── */}
+              {/* ── Left panel: 分类卡片 ── */}
               <div>
                 <HandDrawnBorder variant="sketch">
                   <div className="py-[var(--space-6)] px-[var(--space-6)]">
@@ -100,7 +103,7 @@ export function ArchiveLayout({
                 </HandDrawnBorder>
               </div>
 
-              {/* ── Right panel: 个人卡片（集成语言切换） ── */}
+              {/* ── Right panel: 个人卡片 ── */}
               <aside className="flex">
                 <ProfileCard profile={profile} locale={locale} className="w-full flex flex-col" />
               </aside>

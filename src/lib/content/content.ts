@@ -128,12 +128,16 @@ export async function getContentBySlug(
   slug: string,
   lang: Locale,
 ): Promise<ContentItem | null> {
+  console.time(`[Perf] getContentBySlug: ${slug}`)
   const dir = contentDir(type, lang)
   const filePath = `${dir}/${slug}.md`
 
   try {
     const raw = await readFile(filePath)
+    console.time(`[Perf] parseFrontmatter: ${slug}`)
     const { frontmatter, rawContent } = parseFrontmatter(raw)
+    console.timeEnd(`[Perf] parseFrontmatter: ${slug}`)
+    console.timeEnd(`[Perf] getContentBySlug: ${slug}`)
     return {
       frontmatter,
       rawContent,
@@ -221,16 +225,25 @@ export async function getBookBySlug(
   slug: string,
   lang: Locale,
 ): Promise<BookData | null> {
+  console.time(`[Perf] getBookBySlug: ${slug}`)
   const dir = contentDir(type, lang)
   const slugs = await getSlugs(dir)
 
   const chapters: BookChapterContent[] = []
   let bookTitle = slug // fallback
 
+  let readFileTotal = 0
+  let parseFmTotal = 0
+
   for (const fileSlug of slugs) {
     try {
+      const t0 = performance.now()
       const raw = await readFile(`${dir}/${fileSlug}.md`)
+      readFileTotal += performance.now() - t0
+
+      const t1 = performance.now()
       const { frontmatter, rawContent } = parseFrontmatter(raw)
+      parseFmTotal += performance.now() - t1
 
       if (frontmatter.book === slug) {
         bookTitle = frontmatter.bookTitle ?? slug
@@ -248,9 +261,16 @@ export async function getBookBySlug(
     }
   }
 
-  if (chapters.length === 0) return null
+  if (chapters.length === 0) {
+    console.timeEnd(`[Perf] getBookBySlug: ${slug}`)
+    return null
+  }
 
   chapters.sort((a, b) => a.chapter - b.chapter)
+
+  console.log(`[Perf] getBookBySlug: readFile (${slugs.length} files) = ${readFileTotal.toFixed(2)} ms`)
+  console.log(`[Perf] getBookBySlug: parseFrontmatter (${slugs.length} files) = ${parseFmTotal.toFixed(2)} ms`)
+  console.timeEnd(`[Perf] getBookBySlug: ${slug}`)
 
   return {
     slug,

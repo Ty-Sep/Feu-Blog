@@ -10,11 +10,6 @@
 // Phase 3C: hosts a global PaperPlane that flies across all sections.
 //   z-5  PaperPlane         (between background and content)
 //   z-1  Content wrapper    (SiteShell background + wall.png)
-//
-// Dependencies:
-//   - SiteShell, HeroSection, WorkspaceSection,
-//     FeaturedArticlesSection, ActivityTimelineSection
-//   - PaperPlane (Phase 3C — global rAF physics)
 // =============================================================================
 
 'use client'
@@ -67,10 +62,20 @@ export function HomepageLayout({
   const [searchOpen, setSearchOpen] = useState(false)
   const [anchorRect, setAnchorRect] = useState<Anchor>({ left: 0, right: 0, top: 0, bottom: 0 })
 
+  // 点击纸飞机：toggle 开关，已打开则关闭，未打开则定位并打开
   const handlePlaneClick = useCallback((rect: DOMRect) => {
-    setAnchorRect({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom })
-    setSearchOpen(true)
-  }, [])
+    if (searchOpen) {
+      setSearchOpen(false)
+    } else {
+      setAnchorRect({
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+      })
+      setSearchOpen(true)
+    }
+  }, [searchOpen])
 
   const handleSearchClose = useCallback(() => {
     setSearchOpen(false)

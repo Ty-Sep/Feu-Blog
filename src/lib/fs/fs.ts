@@ -26,9 +26,11 @@ export async function readFile(filePath: string): Promise<string> {
     return cached
   }
 
+  console.time(`[Perf] readFile: ${filePath}`)
   const absolute = resolve(process.cwd(), filePath)
   const content = await nodeReadFile(absolute, 'utf-8')
   fileCache.set(filePath, content)
+  console.timeEnd(`[Perf] readFile: ${filePath}`)
   return content
 }
 
@@ -50,6 +52,7 @@ export async function getSlugs(dir: string): Promise<string[]> {
     return cached
   }
 
+  console.time(`[Perf] getSlugs: ${dir}`)
   const absolute = resolve(process.cwd(), dir)
   try {
     const entries = await readdir(absolute)
@@ -57,6 +60,7 @@ export async function getSlugs(dir: string): Promise<string[]> {
       .filter((entry) => extname(entry) === '.md')
       .map((entry) => basename(entry, '.md'))
     dirCache.set(dir, slugs)
+    console.timeEnd(`[Perf] getSlugs: ${dir}`)
     return slugs
   } catch {
     // Directory may not exist yet (e.g. new content type with no posts).
