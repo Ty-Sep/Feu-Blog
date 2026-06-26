@@ -5,7 +5,7 @@
 // Middleware imports detectLocale for cookie-based negotiation.
 // =============================================================================
 
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Constants

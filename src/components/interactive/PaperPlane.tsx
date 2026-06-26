@@ -12,6 +12,7 @@
 import React, { useRef, useEffect, forwardRef, useCallback } from 'react'
 
 import paperPlanePng from '@/image/paper-plane.png'
+import { clamp } from '@/lib/common'
 
 // ---------------------------------------------------------------------------
 // Physics constants
@@ -71,11 +72,6 @@ function angleDiff(from: number, to: number): number {
   while (d > 180) d -= 360
   while (d < -180) d += 360
   return d
-}
-
-/** Clamps `v` to [lo, hi]. */
-function clamp(v: number, lo: number, hi: number): number {
-  return v < lo ? lo : v > hi ? hi : v
 }
 
 // ---------------------------------------------------------------------------

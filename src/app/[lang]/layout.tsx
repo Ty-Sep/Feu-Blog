@@ -12,8 +12,8 @@
 
 import React from 'react'
 
-import type { Locale } from '@/lib/types'
-import { getAllSearchEntries } from '@/lib/search-data'
+import type { Locale } from '@/types'
+import { getAllSearchEntries } from '@/lib/search'
 import { SearchProvider } from '@/components/search/SearchProvider'
 import { FloatingActionButton } from '@/components/FloatingActionButton'
 

@@ -13,7 +13,7 @@
 
 import React, { forwardRef } from 'react'
 
-import type { ContentCardProps } from '@/lib/types'
+import type { ContentCardProps } from '@/types'
 import { ContentCard } from '@/components/cards/ContentCard'
 
 // ---------------------------------------------------------------------------

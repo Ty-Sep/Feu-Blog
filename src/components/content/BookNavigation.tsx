@@ -13,7 +13,7 @@
 
 import React from 'react'
 
-import type { BookChapter } from '@/lib/content'
+import type { BookChapter } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Types

@@ -15,10 +15,10 @@
 
 import React from 'react'
 
-import type { Locale, Pagination, ContentItem } from '@/lib/types'
-import type { TocItem } from '@/components/content/TableOfContents'
+import type { Locale, Pagination, ContentItem } from '@/types'
+import type { TocItem } from '@/types'
 
-import { SiteShell } from '@/components/layouts/SiteShell'
+import { SiteShell } from '@/components/layout/SiteShell'
 import { ArticleShell } from '@/components/content/ArticleShell'
 import { ContentPagination } from '@/components/content/ContentPagination'
 import { TableOfContents } from '@/components/content/TableOfContents'

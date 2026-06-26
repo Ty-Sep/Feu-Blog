@@ -18,7 +18,7 @@ import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
-import type { Locale, ContentType } from '@/lib/types'
+import type { Locale, ContentType } from '@/types'
 import { getDetailRoute, getCardConfig, getAccentVariable } from '@/tokens/card-config'
 import { HandDrawnBorder } from '@/components/primitives/HandDrawnBorder'
 import { Title } from '@/components/typography/Title'

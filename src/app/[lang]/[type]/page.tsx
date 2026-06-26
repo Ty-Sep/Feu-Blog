@@ -9,10 +9,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import type { Locale, ContentType } from '@/lib/types'
+import type { Locale, ContentType } from '@/types'
 import { CONTENT_TYPES, getCardConfig } from '@/tokens/card-config'
 import { getContentList } from '@/lib/content'
-import { ListLayout } from '@/components/layouts/ListLayout'
+import { ListLayout } from '@/components/layout/ListLayout'
 
 // ---------------------------------------------------------------------------
 // generateStaticParams

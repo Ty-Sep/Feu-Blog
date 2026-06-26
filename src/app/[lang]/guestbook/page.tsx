@@ -12,7 +12,7 @@ import type { Metadata } from 'next'
 import { readFile } from 'fs/promises'
 import { join } from 'path'
 
-import { GuestbookLayout } from '@/components/layouts/GuestbookLayout'
+import { GuestbookLayout } from '@/components/layout/GuestbookLayout'
 import type { GuestbookMessage } from '@/components/guestbook/GuestbookNote'
 
 // ---------------------------------------------------------------------------

@@ -9,14 +9,14 @@
 // hardcoded.
 //
 // Dependencies:
-//   - @/lib/types.ts:          Pagination, ContentType, Locale
+//   - @/types.ts:          Pagination, ContentType, Locale
 //   - @/tokens/card-config.ts: getDetailRoute
 // =============================================================================
 
 import React from 'react'
 import Link from 'next/link'
 
-import type { Pagination, ContentType, Locale } from '@/lib/types'
+import type { Pagination, ContentType, Locale } from '@/types'
 import { getDetailRoute } from '@/tokens/card-config'
 
 // ---------------------------------------------------------------------------

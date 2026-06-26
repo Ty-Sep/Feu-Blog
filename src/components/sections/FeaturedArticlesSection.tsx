@@ -19,7 +19,7 @@ import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
-import type { Locale, ContentCardProps } from '@/lib/types'
+import type { Locale, ContentCardProps } from '@/types'
 import { getDetailRoute, getCardConfig, getAccentVariable } from '@/tokens/card-config'
 import { HandDrawnBorder } from '@/components/primitives/HandDrawnBorder'
 import { Title } from '@/components/typography/Title'

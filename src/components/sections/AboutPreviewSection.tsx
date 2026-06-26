@@ -7,13 +7,13 @@
 // Dependencies:
 //   - HandDrawnBorder (Phase 4A)
 //   - Title           (Phase 4A)
-//   - ProfileData     (@/lib/types)
+//   - ProfileData     (@/types)
 // =============================================================================
 
 import React from 'react'
 import Link from 'next/link'
 
-import type { Locale, ProfileData } from '@/lib/types'
+import type { Locale, ProfileData } from '@/types'
 import { HandDrawnBorder } from '@/components/primitives/HandDrawnBorder'
 import { Title } from '@/components/typography/Title'
 

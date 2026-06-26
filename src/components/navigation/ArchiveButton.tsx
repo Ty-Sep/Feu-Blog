@@ -19,7 +19,7 @@
 // Dependencies:
 //   - next/navigation (usePathname, useRouter)
 //   - framer-motion     (motion.div, animate, onAnimationComplete)
-//   - @/lib/types       (Locale)
+//   - @/types       (Locale)
 // =============================================================================
 
 'use client'
@@ -28,7 +28,7 @@ import React, { useId, useCallback, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -193,7 +193,7 @@ export function ArchiveButton({
           transition-opacity duration-300
           pointer-events-none
         "
-        style={{ boxShadow: '0 4px 14px rgba(0,0,0,0.12)' }}
+        style={{ boxShadow: 'var(--shadow-hover)' }}
       />
 
       {/* ═══════════════════════════════════════════

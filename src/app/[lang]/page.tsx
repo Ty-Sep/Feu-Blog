@@ -13,10 +13,10 @@
 
 import type { Metadata } from 'next'
 
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 import { CONTENT_TYPES } from '@/tokens/card-config'
 import { getContentList } from '@/lib/content'
-import { HomepageLayout } from '@/components/layouts/HomepageLayout'
+import { HomepageLayout } from '@/components/layout/HomepageLayout'
 import type { TimelineItem } from '@/components/sections/ActivityTimelineSection'
 
 // ---------------------------------------------------------------------------

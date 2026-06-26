@@ -17,8 +17,8 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-import type { Locale } from '@/lib/types'
-import { SiteShell } from '@/components/layouts/SiteShell'
+import type { Locale } from '@/types'
+import { SiteShell } from '@/components/layout/SiteShell'
 import { Title } from '@/components/typography/Title'
 import { GuestbookNote } from '@/components/guestbook/GuestbookNote'
 import { GuestbookForm } from '@/components/guestbook/GuestbookForm'

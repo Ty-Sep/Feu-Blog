@@ -21,15 +21,14 @@
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 
+import type { TocItem } from '@/types'
+import { VerticalDividerLine } from '@/components/illustrations/VerticalDividerLine'
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export interface TocItem {
-  id: string
-  text: string
-  level: 1 | 2 | 3
-}
+export type { TocItem } from '@/types'
 
 export interface TableOfContentsProps {
   items: TocItem[]
@@ -348,26 +347,13 @@ export function TableOfContents({
           max-h-[calc(100vh-4rem)]
         "
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(6px)',
-          WebkitBackdropFilter: 'blur(6px)',
+          backgroundColor: 'var(--sidebar-bg)',
+          backdropFilter: 'var(--sidebar-blur)',
+          WebkitBackdropFilter: 'var(--sidebar-blur)',
           padding: '0 var(--space-2) var(--space-2) var(--space-2)',
         }}
       >
-        {/* 手绘黑色垂直分割线 */}
-        <svg
-          className="absolute top-0 right-0 h-full w-[5px] pointer-events-none"
-          viewBox="0 0 5 200"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M2.5,0 Q0,25 2.5,50 Q5,75 2.5,100 Q0,125 2.5,150 Q5,175 2.5,200"
-            fill="none"
-            strokeLinecap="round"
-            stroke="#000"
-          />
-        </svg>
+        <VerticalDividerLine />
 
         {/* Fixed header */}
         <div className="flex-shrink-0 pb-[var(--space-2)] min-w-0 w-full">

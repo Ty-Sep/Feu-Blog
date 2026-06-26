@@ -5,13 +5,13 @@
 // arrive via props.
 //
 // Dependencies:
-//   - @/lib/types.ts: CollectionLink
+//   - @/types.ts: CollectionLink
 // =============================================================================
 
 import React from 'react'
 import Link from 'next/link'
 
-import type { CollectionLink } from '@/lib/types'
+import type { CollectionLink } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Types

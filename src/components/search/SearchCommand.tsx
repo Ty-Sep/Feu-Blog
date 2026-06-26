@@ -126,7 +126,7 @@ export function SearchCommand({
           onKeyDown={(e) => { if (e.key === 'Escape') close() }}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0,0,0,0.3)' }} />
+          <div className="absolute inset-0" style={{ backgroundColor: 'var(--overlay-bg)' }} />
 
           {/* Command palette */}
           <div

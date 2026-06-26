@@ -5,7 +5,7 @@
 // Integrated language toggle slider, about link, search tip sticky note.
 //
 // Dependencies:
-//   - @/lib/types.ts: ProfileData, SocialLink, Locale
+//   - @/types.ts: ProfileData, SocialLink, Locale
 //   - HandDrawnBorder (Phase 4A)
 //   - SketchDivider (Phase 4A)
 // =============================================================================
@@ -15,7 +15,7 @@
 import React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
-import type { ProfileData, SocialLink, Locale } from '@/lib/types'
+import type { ProfileData, SocialLink, Locale } from '@/types'
 import { HandDrawnBorder } from '@/components/primitives/HandDrawnBorder'
 import { SketchDivider } from '@/components/primitives/SketchDivider'
 

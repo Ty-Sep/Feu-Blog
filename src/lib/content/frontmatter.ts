@@ -4,7 +4,7 @@
 // =============================================================================
 
 import matter from 'gray-matter'
-import type { Frontmatter, ContentType } from '@/lib/types'
+import type { Frontmatter, ContentType } from '@/types'
 import { CONTENT_TYPES } from '@/tokens/card-config'
 
 // ---------------------------------------------------------------------------

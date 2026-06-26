@@ -9,10 +9,10 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MarkdownAsync } from 'react-markdown'
 
-import type { Locale, Frontmatter } from '@/lib/types'
-import { parseFrontmatter } from '@/lib/frontmatter'
+import type { Locale, Frontmatter } from '@/types'
+import { parseFrontmatter } from '@/lib/content'
 import { readFile } from '@/lib/fs'
-import { AboutLayout } from '@/components/layouts/AboutLayout'
+import { AboutLayout } from '@/components/layout/AboutLayout'
 import { MDXRenderer } from '@/components/content/MDXRenderer'
 
 // ---------------------------------------------------------------------------

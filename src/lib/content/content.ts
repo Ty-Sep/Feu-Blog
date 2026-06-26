@@ -6,10 +6,10 @@
 // and article title translations (via frontmatter title_en, if provided).
 // =============================================================================
 
-import type { Locale, ContentType, ContentItem, ContentCardProps } from '@/lib/types'
+import type { Locale, ContentType, ContentItem, ContentCardProps, BookChapter, BookChapterContent, BookData, SeriesArticle } from '@/types'
 import { getCardConfig } from '@/tokens/card-config'
-import { readFile, getSlugs } from '@/lib/fs'
-import { parseFrontmatter } from '@/lib/frontmatter'
+import { readFile, getSlugs } from '../fs'
+import { parseFrontmatter } from './frontmatter'
 
 // ---------------------------------------------------------------------------
 // Content directory — always zh (single content source)
@@ -25,36 +25,10 @@ function contentDir(type: ContentType, _lang: Locale): string {
 }
 
 // ---------------------------------------------------------------------------
-// Book types
+// Book types — re-exported from the canonical definition in @/types
 // ---------------------------------------------------------------------------
 
-export interface BookChapter {
-  /** File slug (used internally for content loading). */
-  slug: string
-  title: string
-  /** Chapter number within the book (1-based). */
-  chapter: number
-  /** Short summary for navigation display. */
-  summary?: string
-}
-
-export interface BookChapterContent extends BookChapter {
-  frontmatter: import('@/lib/types').Frontmatter
-  rawContent: string
-}
-
-export interface BookData {
-  /** Book identifier (e.g. "software-exam"). */
-  slug: string
-  /** Human-readable book title (e.g. "软件设计师"). */
-  title: string
-  type: ContentType
-  lang: Locale
-  chapters: BookChapterContent[]
-}
-
-/** Legacy alias — kept for compatibility with SeriesNavigation → BookNavigation rename path. */
-export type SeriesArticle = BookChapter
+export type { BookChapter, BookChapterContent, BookData, SeriesArticle } from '@/types'
 
 // ---------------------------------------------------------------------------
 // getContentList

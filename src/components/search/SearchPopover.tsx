@@ -30,7 +30,10 @@ import React, {
 import { useRouter } from 'next/navigation'
 
 import { useSearchEntries } from '@/components/search/SearchProvider'
-import type { SearchEntry } from '@/lib/search-data'
+import { useClickOutside } from '@/hooks/useClickOutside'
+import { useEscapeKey } from '@/hooks/useEscapeKey'
+import { clamp } from '@/lib/common'
+import type { SearchEntry } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -114,10 +117,6 @@ function computePosition(anchor: Anchor): { left: number; top: number } {
   return { left, top }
 }
 
-function clamp(v: number, lo: number, hi: number): number {
-  return v < lo ? lo : v > hi ? hi : v
-}
-
 // ---------------------------------------------------------------------------
 // Fuzzy match
 // ---------------------------------------------------------------------------
@@ -193,30 +192,10 @@ export function SearchPopover({
   }, [onClose])
 
   // ── Click outside ──
-  useEffect(() => {
-    const handler = (e: PointerEvent) => {
-      if (!panelRef.current) return
-      if (!panelRef.current.contains(e.target as Node)) {
-        startClose()
-      }
-    }
-    const id = setTimeout(() => {
-      document.addEventListener('pointerdown', handler)
-    }, 0)
-    return () => {
-      clearTimeout(id)
-      document.removeEventListener('pointerdown', handler)
-    }
-  }, [startClose])
+  useClickOutside(panelRef, startClose)
 
   // ── ESC ──
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') startClose()
-    }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [startClose])
+  useEscapeKey(startClose)
 
   // ── Filter results ──
   const results = useMemo(() => {

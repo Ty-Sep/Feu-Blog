@@ -30,11 +30,10 @@ const config: Config = {
         'ink-muted':     'var(--ink-muted)',
 
         /* ── Accent colours (one per content type) ── */
-        'accent-java':     'var(--accent-java)',
-        'accent-408':      'var(--accent-408)',
-        'accent-exam':     'var(--accent-exam)',
+        'accent-study':    'var(--accent-study)',
         'accent-articles': 'var(--accent-articles)',
         'accent-projects': 'var(--accent-projects)',
+        'accent-lab':      'var(--accent-lab)',
 
         /* ── Sticky note colours ── */
         'sticky-yellow': 'var(--sticky-yellow)',

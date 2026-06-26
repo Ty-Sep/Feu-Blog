@@ -15,10 +15,10 @@
 
 import React from 'react'
 
-import type { Locale } from '@/lib/types'
-import type { Frontmatter } from '@/lib/types'
+import type { Locale } from '@/types'
+import type { Frontmatter } from '@/types'
 
-import { SiteShell } from '@/components/layouts/SiteShell'
+import { SiteShell } from '@/components/layout/SiteShell'
 import { ArticleShell } from '@/components/content/ArticleShell'
 
 // ---------------------------------------------------------------------------

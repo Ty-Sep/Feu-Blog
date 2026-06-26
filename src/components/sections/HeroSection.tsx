@@ -20,7 +20,7 @@
 import React, { useId, useRef, useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 
 import { HeroWindowScene } from '@/components/interactive/HeroWindowScene'
 import miroodlesSticker from '@/image/Miroodles - Sticker.png'
@@ -149,7 +149,7 @@ const WINDOW_FILTER_SEED = 7
 const WINDOW_BASE_FREQ = 0.03
 const WINDOW_OCTAVES = 3
 const WINDOW_DISPLACEMENT = 1.8
-const WINDOW_PANE_FILL = 'rgba(254,253,251,0.35)'
+const WINDOW_PANE_FILL = 'var(--window-pane-fill)'
 
 // ---------------------------------------------------------------------------
 // WindowFrame — hand-drawn four-pane window (visual only, no logic)

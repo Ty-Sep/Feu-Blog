@@ -1,33 +1,14 @@
 // =============================================================================
-// Shared TypeScript interfaces — leaf node, zero dependencies.
+// Article types — content types, frontmatter, pagination.
 // =============================================================================
 
-/* ── Locale ── */
-
-export type Locale = 'zh' | 'en'
-
-/* ── Content types ── */
+import type { Locale } from './common'
 
 export type ContentType =
   | 'study-notes'
   | 'articles'
   | 'projects'
   | 'lab'
-
-/* ── Card Config ── */
-
-export interface CardConfigEntry {
-  /** Human-readable category labels per locale */
-  label: Record<Locale, string>
-  /** URL segment, e.g. "java" */
-  route: string
-  /** lucide-react icon name */
-  icon: string
-  /** Semantic token — resolves via CSS variable, e.g. "accent-java" */
-  accent: string
-}
-
-/* ── ContentCard Props ── */
 
 export interface ContentCardProps {
   type: ContentType
@@ -40,8 +21,6 @@ export interface ContentCardProps {
   /** When true, the article appears in the Featured Articles section. */
   featured?: boolean
 }
-
-/* ── MDX Frontmatter ── */
 
 export interface Frontmatter {
   title: string
@@ -68,8 +47,6 @@ export interface Frontmatter {
   [key: string]: unknown
 }
 
-/* ── Content Query Results ── */
-
 export interface ContentItem {
   frontmatter: Frontmatter
   slug: string
@@ -77,8 +54,6 @@ export interface ContentItem {
   lang: Locale
   rawContent: string
 }
-
-/* ── Pagination ── */
 
 export interface PaginationLink {
   slug: string
@@ -88,46 +63,4 @@ export interface PaginationLink {
 export interface Pagination {
   prev?: PaginationLink
   next?: PaginationLink
-}
-
-/* ── Archive ── */
-
-export interface SocialLink {
-  label: string
-  url: string
-}
-
-export interface CategoryLink {
-  label: string
-  count: number
-  href: string
-}
-
-export interface CollectionLink {
-  label: string
-  href: string
-}
-
-export interface ProfileData {
-  avatar: string
-  bio: string
-  contact: {
-    email?: string
-    github?: string
-    socials?: SocialLink[]
-  }
-  featuredLinks?: SocialLink[]
-}
-
-export interface ArchiveData {
-  categories: CategoryLink[]
-  collections: CollectionLink[]
-  profile: ProfileData
-}
-
-/* ── Homepage ── */
-
-export interface HomepageModuleData {
-  type: ContentType
-  cards: ContentCardProps[]
 }

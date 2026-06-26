@@ -21,10 +21,10 @@
 
 import React, { useRef, useState, useCallback } from 'react'
 
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 import type { TimelineItem } from '@/components/sections/ActivityTimelineSection'
 
-import { SiteShell } from '@/components/layouts/SiteShell'
+import { SiteShell } from '@/components/layout/SiteShell'
 import { HeroSection } from '@/components/sections/HeroSection'
 import { WorkspaceSection } from '@/components/sections/WorkspaceSection'
 import { FeaturedArticlesSection } from '@/components/sections/FeaturedArticlesSection'
@@ -40,7 +40,7 @@ import type { Anchor } from '@/components/search/SearchPopover'
 
 export interface HomepageLayoutProps {
   locale: Locale
-  featuredArticles: import('@/lib/types').ContentCardProps[]
+  featuredArticles: import('@/types').ContentCardProps[]
   recentItems: TimelineItem[]
   className?: string
 }

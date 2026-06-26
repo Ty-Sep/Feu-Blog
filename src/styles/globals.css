@@ -64,6 +64,22 @@
     --duration-fade:  200ms;
     --duration-slide: 300ms;
     --stagger-delay:  60ms;
+
+    /* ── Borders ── */
+    --border-sketch: rgba(0, 0, 0, 0.08);
+
+    /* ── Sidebar ── */
+    --sidebar-bg: rgba(255, 255, 255, 0.8);
+    --sidebar-blur: blur(6px);
+
+    /* ── Extended shadows ── */
+    --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.10);
+
+    /* ── Overlay ── */
+    --overlay-bg: rgba(0, 0, 0, 0.3);
+
+    /* ── Misc ── */
+    --window-pane-fill: rgba(254, 253, 251, 0.35);
   }
 
   /* ── Base element reset ── */

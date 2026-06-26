@@ -13,10 +13,10 @@ import type {
   ContentType,
   CategoryLink,
   ProfileData,
-} from '@/lib/types'
+} from '@/types'
 import { CONTENT_TYPES, getCardConfig, getListRoute } from '@/tokens/card-config'
 import { getContentList } from '@/lib/content'
-import { ArchiveLayout } from '@/components/layouts/ArchiveLayout'
+import { ArchiveLayout } from '@/components/layout/ArchiveLayout'
 import authorAvatar from '@/image/author.png'
 
 // ---------------------------------------------------------------------------

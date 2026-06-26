@@ -7,7 +7,7 @@
 //
 // Dependencies:
 //   - @/lib/locale.ts: switchLocalePathname, SUPPORTED_LOCALES
-//   - @/lib/types.ts:   Locale
+//   - @/types.ts:   Locale
 // =============================================================================
 
 'use client'
@@ -17,7 +17,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { switchLocalePathname, SUPPORTED_LOCALES } from '@/lib/locale'
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Types

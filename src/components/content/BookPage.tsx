@@ -15,11 +15,11 @@
 
 import React, { useState } from 'react'
 
-import type { Locale } from '@/lib/types'
-import type { TocItem } from '@/components/content/TableOfContents'
-import type { BookChapterContent } from '@/lib/content'
+import type { Locale } from '@/types'
+import type { TocItem } from '@/types'
+import type { BookChapterContent } from '@/types'
 
-import { SiteShell } from '@/components/layouts/SiteShell'
+import { SiteShell } from '@/components/layout/SiteShell'
 import { TocTabs } from '@/components/content/TocTabs'
 import { TableOfContents } from '@/components/content/TableOfContents'
 import { BookNavigation } from '@/components/content/BookNavigation'

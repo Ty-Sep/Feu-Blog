@@ -13,7 +13,7 @@
 
 import React from 'react'
 
-import type { Locale, HomepageModuleData } from '@/lib/types'
+import type { Locale, HomepageModuleData } from '@/types'
 import { getCardConfig } from '@/tokens/card-config'
 
 import { HomepageModule } from '@/components/sections/HomepageModule'

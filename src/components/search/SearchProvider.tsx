@@ -12,7 +12,7 @@
 'use client'
 
 import React, { createContext, useContext } from 'react'
-import type { SearchEntry } from '@/lib/search-data'
+import type { SearchEntry } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Context

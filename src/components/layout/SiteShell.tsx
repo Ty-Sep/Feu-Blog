@@ -14,7 +14,7 @@
 
 import React from 'react'
 
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 
 import { SketchDivider } from '@/components/primitives/SketchDivider'
 

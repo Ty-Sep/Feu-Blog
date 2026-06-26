@@ -4,13 +4,13 @@
 // PaperCSS imperfect button style, with numbered index and muted counts.
 //
 // Dependencies:
-//   - @/lib/types.ts: CategoryLink
+//   - @/types.ts: CategoryLink
 // =============================================================================
 
 import React from 'react'
 import Link from 'next/link'
 
-import type { CategoryLink } from '@/lib/types'
+import type { CategoryLink } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Types

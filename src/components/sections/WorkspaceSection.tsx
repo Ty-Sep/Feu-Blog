@@ -25,7 +25,7 @@ import React from 'react'
 import Link from 'next/link'
 import { motion, type Variants } from 'framer-motion'
 
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 
 import p1Img from '@/image/p1.png'
 import p2Img from '@/image/p2.png'

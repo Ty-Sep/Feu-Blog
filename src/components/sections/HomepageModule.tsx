@@ -14,13 +14,13 @@
 //   - @/components/primitives/SketchDivider.tsx
 //   - @/components/cards/CardGrid.tsx
 //   - @/tokens/card-config.ts: getListRoute
-//   - @/lib/types.ts: ContentCardProps, ContentType, Locale
+//   - @/types.ts: ContentCardProps, ContentType, Locale
 // =============================================================================
 
 import React from 'react'
 import Link from 'next/link'
 
-import type { ContentCardProps, ContentType, Locale } from '@/lib/types'
+import type { ContentCardProps, ContentType, Locale } from '@/types'
 import { getListRoute } from '@/tokens/card-config'
 
 import { Title } from '@/components/typography/Title'

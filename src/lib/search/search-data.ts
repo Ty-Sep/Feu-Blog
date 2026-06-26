@@ -6,9 +6,9 @@
 // objects that can cross the server→client boundary.
 // =============================================================================
 
-import type { Locale, ContentType } from '@/lib/types'
+import type { Locale, ContentType } from '@/types'
 import { CONTENT_TYPES, getCardConfig, getDetailRoute } from '@/tokens/card-config'
-import { getContentList } from '@/lib/content'
+import { getContentList } from '../content'
 
 // ---------------------------------------------------------------------------
 // Types

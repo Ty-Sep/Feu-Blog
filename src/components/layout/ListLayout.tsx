@@ -18,9 +18,9 @@
 
 import React from 'react'
 
-import type { Locale, ContentType, ContentCardProps, Pagination } from '@/lib/types'
+import type { Locale, ContentType, ContentCardProps, Pagination } from '@/types'
 
-import { SiteShell } from '@/components/layouts/SiteShell'
+import { SiteShell } from '@/components/layout/SiteShell'
 import { Title } from '@/components/typography/Title'
 import { CardList } from '@/components/cards/CardList'
 import { ContentPagination } from '@/components/content/ContentPagination'

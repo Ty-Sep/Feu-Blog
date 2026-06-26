@@ -14,7 +14,7 @@
 // Dependencies:
 //   - next/link
 //   - next/navigation (useRouter — back variant only)
-//   - @/lib/types (Locale)
+//   - @/types (Locale)
 // =============================================================================
 
 'use client'
@@ -23,7 +23,7 @@ import React, { useId, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import type { Locale } from '@/lib/types'
+import type { Locale } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Labels
@@ -165,7 +165,7 @@ function ButtonShell({
           transition-opacity duration-300
           pointer-events-none
         "
-        style={{ boxShadow: '0 4px 14px rgba(0,0,0,0.10)' }}
+        style={{ boxShadow: 'var(--shadow-hover)' }}
       />
 
       {/* ── Icon ── */}

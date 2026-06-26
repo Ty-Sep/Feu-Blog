@@ -20,9 +20,9 @@
 
 import React, { useRef, useState, useCallback } from 'react'
 
-import type { Locale, CategoryLink, ProfileData } from '@/lib/types'
+import type { Locale, CategoryLink, ProfileData } from '@/types'
 
-import { SiteShell } from '@/components/layouts/SiteShell'
+import { SiteShell } from '@/components/layout/SiteShell'
 import { CategoryList } from '@/components/sections/CategoryList'
 import { ProfileCard } from '@/components/sections/ProfileCard'
 import { HandDrawnBorder } from '@/components/primitives/HandDrawnBorder'

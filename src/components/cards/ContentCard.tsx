@@ -8,7 +8,7 @@
 import React, { forwardRef } from 'react'
 import Link from 'next/link'
 
-import type { ContentCardProps } from '@/lib/types'
+import type { ContentCardProps } from '@/types'
 import {
   getAccentVariable,
   getDetailRoute,

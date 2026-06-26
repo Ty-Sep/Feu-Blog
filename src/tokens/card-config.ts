@@ -9,7 +9,7 @@
 // component changes are needed.
 // =============================================================================
 
-import type { ContentType, CardConfigEntry } from '@/lib/types'
+import type { ContentType, CardConfigEntry } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Primary map
