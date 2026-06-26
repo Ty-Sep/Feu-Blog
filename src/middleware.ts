@@ -84,6 +84,6 @@ export const config = {
      *   /favicon.ico    — Browser favicon
      *   /*.svg|png|jpg  — Inline image references
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|images|.*\\.svg$|.*\\.png$|.*\\.jpg$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|images|.*\\.svg$|.*\\.png$|.*\\.jpg$|.*\\.lottie$).*)',
   ],
 }

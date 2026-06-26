@@ -1,11 +1,5 @@
 // =============================================================================
 // Root Layout — required by Next.js App Router.
-//
-// Sets up the <html> shell, loads global CSS, and declares the font loader
-// for the hand-drawn notebook aesthetic.
-//
-// Locale is set to the default ('zh') — individual pages do not reconfigure
-// <html lang> because the root layout cannot access route params dynamically.
 // =============================================================================
 
 import type { Metadata, Viewport } from 'next'
@@ -13,6 +7,8 @@ import type { Metadata, Viewport } from 'next'
 import { Caveat, Noto_Sans_SC } from 'next/font/google'
 
 import '@/styles/globals.css'
+import { LoadingProvider } from '@/components/navigation/LoadingContext'
+import RouteLoadingProvider from '@/components/navigation/RouteLoadingProvider'
 
 // ---------------------------------------------------------------------------
 // Fonts
@@ -68,7 +64,9 @@ export default function RootLayout({
           color: 'var(--ink-primary)',
         }}
       >
-        {children}
+        <LoadingProvider>
+          <RouteLoadingProvider>{children}</RouteLoadingProvider>
+        </LoadingProvider>
       </body>
     </html>
   )

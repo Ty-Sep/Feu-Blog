@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation'
 import { useSearchEntries } from '@/components/search/SearchProvider'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
+import { useLoading } from '@/components/navigation/LoadingContext'
 import { clamp } from '@/lib/common'
 import type { SearchEntry } from '@/types'
 
@@ -87,23 +88,18 @@ function computePosition(anchor: Anchor): { left: number; top: number } {
 
   // 优先级：右 > 左 > 下 > 上 > 居中
   if (spaceRight >= pw) {
-    // 右侧弹出，垂直居中对齐飞机
     left = anchor.right + GAP
     top = planeCenterY - ph / 2
   } else if (spaceLeft >= pw) {
-    // 左侧弹出，垂直居中对齐飞机
     left = anchor.left - pw - GAP
     top = planeCenterY - ph / 2
   } else if (spaceBottom >= ph) {
-    // 下方弹出，水平居中对齐飞机
     top = anchor.bottom + GAP
     left = planeCenterX - pw / 2
   } else if (spaceTop >= ph) {
-    // 上方弹出，水平居中对齐飞机
     top = anchor.top - ph - GAP
     left = planeCenterX - pw / 2
   } else {
-    // 空间都不足，视口居中兜底
     left = (vw - pw) / 2
     top = (vh - ph) / 2
   }
@@ -141,6 +137,7 @@ export function SearchPopover({
 }: SearchPopoverProps): React.ReactElement | null {
   const entries = useSearchEntries()
   const router = useRouter()
+  const { startLoading } = useLoading()
   const [phase, setPhase] = useState<Phase>('entering')
   const [query, setQuery] = useState('')
   const [pos, setPos] = useState(() => computePosition(anchorRect))
@@ -213,13 +210,16 @@ export function SearchPopover({
       .slice(0, 12)
   }, [entries, query])
 
-  // 跳转并关闭
+  // 跳转并关闭：先启动 Loading，再执行跳转
   const handleSelect = useCallback(
     (href: string) => {
       startClose()
-      setTimeout(() => router.push(href), EXPAND_DURATION)
+      setTimeout(() => {
+        startLoading()
+        router.push(href)
+      }, EXPAND_DURATION)
     },
-    [router, startClose],
+    [router, startClose, startLoading],
   )
 
   // 动画样式

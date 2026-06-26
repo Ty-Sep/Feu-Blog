@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@giscus/react": "^2.4.0",
+    "@lottiefiles/dotlottie-react": "^0.19.5",
     "@shikijs/rehype": "^1.0.0",
     "@shikijs/transformers": "^1.0.0",
     "cmdk": "^1.1.1",
