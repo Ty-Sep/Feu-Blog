@@ -260,11 +260,8 @@ export default async function DetailPage({
     notFound()
   }
 
-  // ── Extract TOC ──
-  const toc: TocItem[] | undefined =
-    contentType === 'study-notes'
-      ? extractToc(article.rawContent)
-      : undefined
+  // ── Extract TOC (all article types) ──
+  const toc: TocItem[] = extractToc(article.rawContent)
 
   return (
     <DetailLayout

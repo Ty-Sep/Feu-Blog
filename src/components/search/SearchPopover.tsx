@@ -253,16 +253,15 @@ export function SearchPopover({
   return (
     <div
       ref={panelRef}
-      className="fixed z-[200]"
+      className="fixed z-[200] rounded-sketch overflow-hidden"
       style={{
         left: pos.left,
         top: pos.top,
         width: `clamp(320px, 90vw, ${PANEL_WIDTH}px)`,
         maxWidth: `calc(100vw - ${VIEWPORT_MARGIN * 2}px)`,
         backgroundColor: 'var(--bg-card)',
-        borderRadius: '18px',
-        boxShadow: '0 12px 30px rgba(0,0,0,0.12)',
-        border: '1px solid var(--border-sketch, rgba(0,0,0,0.08))',
+        boxShadow: 'var(--shadow-note)',
+        border: '2px solid var(--ink-primary)',
         ...animStyle,
       }}
     >
@@ -270,9 +269,9 @@ export function SearchPopover({
       <div className="flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)]">
         <svg
           width="18" height="18" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
+          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
           className="flex-shrink-0"
-          style={{ color: 'var(--ink-muted)' }}
+          style={{ color: 'var(--ink-primary)' }}
           aria-hidden="true"
         >
           <circle cx="11" cy="11" r="8" />
@@ -297,12 +296,12 @@ export function SearchPopover({
         />
       </div>
 
-      {/* ── Divider ── */}
+      {/* ── Divider 手绘风格分割线 ── */}
       <div
         className="mx-[var(--space-4)]"
         style={{
-          borderTop: '1px solid',
-          borderColor: 'color-mix(in srgb, var(--ink-muted) 15%, transparent)',
+          borderTop: '2px dashed',
+          borderColor: 'color-mix(in srgb, var(--ink-primary) 30%, transparent)',
         }}
       />
 
@@ -339,7 +338,7 @@ export function SearchPopover({
 }
 
 // ---------------------------------------------------------------------------
-// SearchResultItem — sticky-note card
+// SearchResultItem — 对齐全站手绘便签卡片风格
 // ---------------------------------------------------------------------------
 
 function SearchResultItem({
@@ -357,16 +356,23 @@ function SearchResultItem({
         className="
           w-full text-left
           px-[var(--space-3)] py-[var(--space-2)]
-          rounded-[12px]
+          rounded-sketch
           transition-all duration-200
-          hover:-translate-y-[2px]
-          hover:shadow-md
+          hover:-translate-y-[1px]
           focus-visible:outline-2 focus-visible:outline-offset-[-2px]
         "
         style={{
           backgroundColor: 'var(--bg-page)',
           outlineColor: 'var(--ink-primary)',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          border: '1.5px solid var(--border-sketch)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'var(--ink-primary)'
+          e.currentTarget.style.boxShadow = 'var(--shadow-note)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = 'var(--border-sketch)'
+          e.currentTarget.style.boxShadow = 'none'
         }}
       >
         <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-1)]">
@@ -380,6 +386,7 @@ function SearchResultItem({
             style={{
               backgroundColor: 'var(--sticky-yellow)',
               color: 'var(--ink-primary)',
+              border: '1.5px solid var(--ink-primary)',
             }}
           >
             {entry.typeLabel}
