@@ -19,11 +19,11 @@ import { clamp } from '@/lib/common'
 // ---------------------------------------------------------------------------
 
 /** Max speed — pixels per frame at ~60 fps. */
-const MAX_SPEED = 3.5
+const MAX_SPEED = 4.0
 /** Velocity blend factor toward desired direction. */
-const VELOCITY_BLEND = 0.08
+const VELOCITY_BLEND = 0.10
 /** Per-frame velocity decay during glide (mouse leave). */
-const GLIDE_DECAY = 0.985
+const GLIDE_DECAY = 0.988
 /** Shortest-angle lerp factor for heading smoothing. */
 const ANGLE_SMOOTH = 0.08
 /** Cap on per-frame rotation change (degrees). */
@@ -251,24 +251,58 @@ export const PaperPlane = forwardRef<HTMLDivElement, PaperPlaneProps>(
       // ════════════════════════════════════════════════════════
 
       if (mouseActive) {
-        // ── Mouse follow — steer centre toward cursor ──
-        const cx = centreX()
-        const cy = centreY()
-        const dx = mouseX - cx
-        const dy = mouseY - cy
-        const dist = Math.sqrt(dx * dx + dy * dy)
+  // ── Mouse follow — stop near cursor instead of touching it ──
+  const cx = centreX()
+  const cy = centreY()
 
-        if (dist > 0.5) {
-          const nx = dx / dist
-          const ny = dy / dist
-          const desiredSpeed = Math.min(dist * 0.06, MAX_SPEED)
-          vx += (nx * desiredSpeed - vx) * VELOCITY_BLEND
-          vy += (ny * desiredSpeed - vy) * VELOCITY_BLEND
-        } else {
-          vx *= 0.92
-          vy *= 0.92
-        }
-      } else if (idleActive) {
+  let dx = mouseX - cx
+  let dy = mouseY - cy
+  let dist = Math.sqrt(dx * dx + dy * dy)
+  
+
+  if (dist > 0.001) {
+    const nx = dx / dist
+    const ny = dy / dist
+
+    /**
+     * 希望停留的距离（飞机中心距离鼠标）
+     */
+    const STOP_DISTANCE = 50
+
+    /**
+     * 开始减速的范围
+     */
+    const SLOW_RADIUS = 110
+
+    /**
+     * 当距离进入减速区以后，
+     * 实际追逐目标改为距离鼠标 STOP_DISTANCE 的位置。
+     */
+    if (dist < SLOW_RADIUS) {
+      const targetDist = Math.max(dist - STOP_DISTANCE, 0)
+
+      dx = nx * targetDist
+      dy = ny * targetDist
+      dist = targetDist
+    }
+
+    if (dist > 0.5) {
+      const desiredSpeed = Math.min(dist * 0.065, MAX_SPEED)
+
+      vx += (dx / Math.max(dist, 1)) * desiredSpeed - vx
+      vy += (dy / Math.max(dist, 1)) * desiredSpeed - vy
+
+      vx *= (1 - VELOCITY_BLEND)
+      vy *= (1 - VELOCITY_BLEND)
+
+      vx += ((dx / Math.max(dist, 1)) * desiredSpeed) * VELOCITY_BLEND
+      vy += ((dy / Math.max(dist, 1)) * desiredSpeed) * VELOCITY_BLEND
+    } else {
+      vx *= 0.85
+      vy *= 0.85
+    }
+  }
+} else if (idleActive) {
         // ── Idle cruise — drift toward random target ──
         const cx = centreX()
         const cy = centreY()
