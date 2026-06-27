@@ -1,24 +1,6 @@
 // =============================================================================
-// LangTemplate — notebook page-flip transition.
-//
-// Simulates turning a physical notebook page using 3D CSS transforms.
-//
-// Design:
-//   Both pages are stacked in the same CSS grid cell.  The exiting page
-//   (top layer) folds to the left while the entering page (bottom layer)
-//   flattens into view — just like turning a real page.
-//
-//   - perspective: 1500 px for depth
-//   - exit:  rotateY  0 → -18 deg  (fold left),  opacity 1 → 0
-//   - enter: rotateY 18 →   0 deg  (flatten),     opacity 0 → 1
-//   - duration: 0.4 s, easeInOut
-//   - GPU-accelerated (transform3d), no layout thrashing
-//
-// Mobile safe: rotation angle is small (18°) — readable at every frame.
-// SSG safe:   AnimatePresence runs only on the client.
-//
-// Dependencies:
-//   - framer-motion
+// LangTemplate — pure fade page transition (stable render version).
+// Fixed: text shift / jitter caused by scrollbar toggle & font rendering switch.
 // =============================================================================
 
 'use client'
@@ -28,27 +10,24 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 
 // ---------------------------------------------------------------------------
-// Variants
+// Variants — pure fade, no transform
 // ---------------------------------------------------------------------------
 
 const pageVariants = {
   initial: {
-    rotateY: 18,
     opacity: 0,
   },
   animate: {
-    rotateY: 0,
     opacity: 1,
   },
   exit: {
-    rotateY: -18,
     opacity: 0,
   },
 }
 
 const pageTransition = {
   duration: 0.4,
-  ease: 'easeInOut' as const,
+  ease: 'easeOut' as const,
 }
 
 // ---------------------------------------------------------------------------
@@ -63,14 +42,8 @@ export default function LangTemplate({
   const pathname = usePathname()
 
   return (
-    <div
-      style={{
-        perspective: '1500px',
-        display: 'grid',
-        minHeight: '100vh',
-      }}
-    >
-      <AnimatePresence>
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
+      <AnimatePresence mode="popLayout">
         <motion.div
           key={pathname}
           initial="initial"
@@ -79,10 +52,16 @@ export default function LangTemplate({
           variants={pageVariants}
           transition={pageTransition}
           style={{
-            gridArea: '1 / 1',
-            transformStyle: 'preserve-3d',
+            position: 'absolute',
+            inset: 0,
+            willChange: 'opacity',
+            // 修复1：强制提升为GPU合成层，稳定渲染，避免图层切换抖动
+            transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
-            willChange: 'transform, opacity',
+            // 修复2：统一字体抗锯齿模式，全程灰度渲染
+            // 避免 opacity 变化时，亚像素渲染开关导致的文字跳变
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
           }}
         >
           {children}
