@@ -23,7 +23,7 @@ export interface BookChapterContent extends BookChapter {
 export interface BookData {
   /** Book identifier (e.g. "software-exam"). */
   slug: string
-  /** Human-readable book title (e.g. "软件设计师"). */
+  /** Human-readable book title (e.g. "这是我的软考笔记哈哈哈"). */
   title: string
   type: ContentType
   lang: Locale

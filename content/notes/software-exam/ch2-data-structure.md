@@ -1,10 +1,10 @@
 ---
 title: 第二章 数据结构与算法基础
 book: software-exam
-bookTitle: 软件设计师
+bookTitle: 这是我的软考笔记哈哈哈
 chapter: 2
 summary: 数据结构与算法基础，包括线性表、栈与队列、串、数组与矩阵、树与二叉树、图、查找与排序算法
-tags: ['软考', '软件设计师', '数据结构', '算法']
+tags: ['软考', '这是我的软考笔记哈哈哈', '数据结构', '算法']
 type: study-notes
 date: '2026-06-25'
 ---

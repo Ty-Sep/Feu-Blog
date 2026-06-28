@@ -37,7 +37,7 @@ import { loadChapter, loadCachedChapter } from '@/app/actions/loadChapter'
 
 export interface BookPageProps {
   locale: Locale
-  /** Book title (e.g. "软件设计师"). */
+  /** Book title (e.g. "这是我的软考笔记哈哈哈"). */
   bookTitle: string
   /** All chapters with pre-extracted TOC + rawContent for lazy loading. */
   chapters: (BookChapterContent & { toc: TocItem[] })[]

@@ -1,10 +1,10 @@
 ---
 title: 第三章 算法设计与分析
 book: software-exam
-bookTitle: 软件设计师
+bookTitle: 这是我的软考笔记哈哈哈
 chapter: 3
 summary: 算法设计与分析，包括分治法、动态规划、贪心法、回溯法、分支限界法及算法复杂度分析
-tags: ['软考', '软件设计师', '算法设计', '算法分析']
+tags: ['软考', '这是我的软考笔记哈哈哈', '算法设计', '算法分析']
 type: study-notes
 date: '2026-06-25'
 ---

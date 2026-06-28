@@ -1,10 +1,10 @@
 ---
 title: 第一章 计算机系统知识
 book: software-exam
-bookTitle: 软件设计师
+bookTitle: 这是我的软考笔记哈哈哈
 chapter: 1
 summary: 计算机系统基础知识，包括数值转换与数据表示、计算机系统组成、CPU与指令系统、存储系统、总线与I/O技术
-tags: ['软考', '软件设计师', '计算机系统', 'CPU', '存储系统']
+tags: ['软考', '这是我的软考笔记哈哈哈', '计算机系统', 'CPU', '存储系统']
 type: study-notes
 date: '2026-06-25'
 ---
