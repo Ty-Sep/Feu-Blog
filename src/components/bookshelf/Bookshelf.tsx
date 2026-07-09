@@ -1,5 +1,5 @@
 // =============================================================================
-// Bookshelf — 3-layer shelf with merged background + left decorative figure.
+// Bookshelf — 3-layer shelf with merged background + decorative figures.
 // Fixed viewport height, no scroll. All sizes are tunable via constants.
 // =============================================================================
 
@@ -9,6 +9,7 @@ import type { ContentCardProps } from '@/types'
 import { Shelf } from './Shelf'
 import bookwallImg from '@/image/bookwall.png'
 import bookmanImg from '@/image/bookman.png'
+import catImg from '@/image/cat.png'
 
 // ---------------------------------------------------------------------------
 // 🔧 所有可调整参数都在这里
@@ -29,7 +30,7 @@ const BACKGROUND_SIZE = '108% auto'
 /** 每层书架摆放的书本数量 */
 const BOOKS_PER_LAYER = 9
 /** 第一层书本距离书架顶部的垂直起始位置 */
-const TOP_PADDING = 78
+const TOP_PADDING = 39
 /** 两层书本之间的垂直间距 */
 const LAYER_GAP = 160
 /** 书本距离书架左右边缘的水平起始位置 */
@@ -42,9 +43,20 @@ const HORIZONTAL_PADDING = 82
 /** 装饰图宽度（px），高度会按图片比例自动缩放 */
 const BOOKMAN_WIDTH = 120
 /** 水平位置：距离组件左边缘的距离，正值向右移 */
-const BOOKMAN_OFFSET_LEFT =-6
+const BOOKMAN_OFFSET_LEFT = -6
 /** 垂直位置：距离组件底部的距离，正值向上移，负值向下移 */
 const BOOKMAN_OFFSET_BOTTOM = 36
+
+// ---------------------------------------------------------------------------
+// 🔧 顶部装饰图（cat.png）参数
+// ---------------------------------------------------------------------------
+
+/** 猫咪图片宽度（px），高度会按图片比例自动缩放 */
+const CAT_WIDTH = 130
+/** 水平位置：距离组件左边缘的距离，正值向右移，负值向左移 */
+const CAT_OFFSET_LEFT = 120
+/** 垂直位置：距离容器顶部的距离，正值向下移，负值向上移 */
+const CAT_OFFSET_TOP = -50
 
 // ---------------------------------------------------------------------------
 // Helper: chunk array into layers
@@ -72,7 +84,7 @@ export function Bookshelf({ cards }: BookshelfProps): React.ReactElement {
 
   return (
     <div
-      className="w-full overflow-y-hidden relative"
+      className="w-full overflow-x-hidden relative"
       style={{
         height: CONTAINER_HEIGHT,
         marginTop: `${SHELF_OFFSET_TOP}px`,
@@ -82,7 +94,20 @@ export function Bookshelf({ cards }: BookshelfProps): React.ReactElement {
         backgroundPosition: `calc(50% + ${SHELF_OFFSET_X}px) top`,
       }}
     >
-      {/* 左侧装饰人物图 —— 完全在容器内部，不会被父级裁剪 */}
+      {/* 顶部猫咪装饰图 */}
+      <img
+        src={catImg.src}
+        alt=""
+        className="absolute pointer-events-none select-none"
+        style={{
+          width: `${CAT_WIDTH}px`,
+          left: `${CAT_OFFSET_LEFT}px`,
+          top: `${CAT_OFFSET_TOP}px`,
+          zIndex: 3,
+        }}
+      />
+
+      {/* 左侧装饰人物图 */}
       <img
         src={bookmanImg.src}
         alt=""
